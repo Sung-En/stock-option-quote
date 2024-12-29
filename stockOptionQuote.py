@@ -65,8 +65,8 @@ try:
             strike_labels = option_data["strike"].values
             strike_positions = option_data["incremental_percentage"].values
             ax2.set_xticks(strike_positions)
-            ax2.set_xticklabels([f"{strike:.1f}" for strike in strike_labels], rotation=45, ha='right', fontsize=12)
-            ax2.set_xlabel("Strike Price", fontsize=16)
+            ax2.set_xticklabels([f"{strike:.1f}" for strike in strike_labels], rotation=45, ha='right', fontsize=14)
+            ax2.set_xlabel("Strike Price", fontsize=20)
 
         # Plot puts (only if plot_put is True)
         if plot_put:
@@ -78,10 +78,10 @@ try:
             axes[0].plot(puts_processed["incremental_percentage"], puts_processed["bid_ratio"], color="blue", alpha=0.5)  # Line for bids
             axes[0].plot(puts_processed["incremental_percentage"], puts_processed["ask_ratio"], color="orange", alpha=0.5)  # Line for asks
 
-            axes[0].set_title(f"{stock_ticker} {next_friday_str} Put Option Quote", fontsize=26)
-            axes[0].set_xlabel("(Strike Price - Stock Price) / Stock Price (%)", fontsize=18)
-            axes[0].set_ylabel("Premium / Strike Price (%)", fontsize=18)
-            axes[0].legend(fontsize=16)
+            axes[0].set_title(f"{stock_ticker} {next_friday_str} (Put Option Quote)", fontsize=28)
+            axes[0].set_xlabel("(Strike Price - Stock Price) / Stock Price (%)", fontsize=22)
+            axes[0].set_ylabel("Premium / Strike Price (%)", fontsize=22)
+            axes[0].legend(fontsize=20)
             axes[0].grid(True, linestyle="--", alpha=0.5)
             overlay_strike_prices(axes[0], puts_processed)
         else:
@@ -97,10 +97,10 @@ try:
             axes[1].plot(calls_processed["incremental_percentage"], calls_processed["bid_ratio"], color="blue", alpha=0.5)  # Line for bids
             axes[1].plot(calls_processed["incremental_percentage"], calls_processed["ask_ratio"], color="orange", alpha=0.5)  # Line for asks
 
-            axes[1].set_title(f"{stock_ticker} {next_friday_str} Call Option Quote", fontsize=26)
-            axes[1].set_xlabel("(Strike Price - Stock Price) / Stock Price (%)", fontsize=18)
-            axes[1].set_ylabel("Premium / Strike Price (%)", fontsize=18)
-            axes[1].legend(fontsize=16)
+            axes[1].set_title(f"{stock_ticker} {next_friday_str} (Call Option Quote)", fontsize=28)
+            axes[1].set_xlabel("(Strike Price - Stock Price) / Stock Price (%)", fontsize=22)
+            axes[1].set_ylabel("Premium / Strike Price (%)", fontsize=22)
+            axes[1].legend(fontsize=20)
             axes[1].grid(True, linestyle="--", alpha=0.5)
             overlay_strike_prices(axes[1], calls_processed)
         else:
