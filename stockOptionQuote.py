@@ -5,10 +5,10 @@ import datetime as dt
 import streamlit as st
 
 # Streamlit app title
-st.title("Options Quote Visualizer")
+st.title("Options Quote Visualizer", fontsize=24)
 
 # Inputs for the app
-stock_ticker = st.text_input("Enter stock ticker:", "AAPL")
+stock_ticker = st.text_input("Enter stock ticker:", "AAPL", label_visibility="collapsed")
 input_date_str = st.date_input("Enter date:", dt.datetime.now()).strftime("%Y-%m-%d")
 put_range = st.slider("Put Range (as % of stock price):", -50, 10, (-20, 5))
 call_range = st.slider("Call Range (as % of stock price):", -10, 50, (-5, 20))
@@ -65,8 +65,8 @@ try:
             strike_labels = option_data["strike"].values
             strike_positions = option_data["incremental_percentage"].values
             ax2.set_xticks(strike_positions)
-            ax2.set_xticklabels([f"{strike:.1f}" for strike in strike_labels], rotation=45, ha='right')
-            ax2.set_xlabel("Strike Price")
+            ax2.set_xticklabels([f"{strike:.1f}" for strike in strike_labels], rotation=45, ha='right', fontsize=12)
+            ax2.set_xlabel("Strike Price", fontsize=14)
 
         # Plot puts (only if plot_put is True)
         if plot_put:
@@ -78,11 +78,11 @@ try:
             axes[0].plot(puts_processed["incremental_percentage"], puts_processed["bid_ratio"], color="blue", alpha=0.5)  # Line for bids
             axes[0].plot(puts_processed["incremental_percentage"], puts_processed["ask_ratio"], color="orange", alpha=0.5)  # Line for asks
 
-            axes[0].set_title(f"Put Options ({next_friday_str})", fontsize=18)
-            axes[0].set_xlabel("(Strike Price - Stock Price) / Stock Price (%)", fontsize=14)
-            axes[0].set_ylabel("Premium / Strike Price (%)", fontsize=14)
-            axes[0].legend(fontsize=12)
-            axes[0].grid(True)
+            axes[0].set_title(f"Put Options ({next_friday_str})", fontsize=20)
+            axes[0].set_xlabel("(Strike Price - Stock Price) / Stock Price (%)", fontsize=16)
+            axes[0].set_ylabel("Premium / Strike Price (%)", fontsize=16)
+            axes[0].legend(fontsize=14)
+            axes[0].grid(True, linestyle="--", alpha=0.5)
             overlay_strike_prices(axes[0], puts_processed)
         else:
             axes[0].axis("off")  # Hide the axis if plot_put is False
@@ -97,11 +97,11 @@ try:
             axes[1].plot(calls_processed["incremental_percentage"], calls_processed["bid_ratio"], color="blue", alpha=0.5)  # Line for bids
             axes[1].plot(calls_processed["incremental_percentage"], calls_processed["ask_ratio"], color="orange", alpha=0.5)  # Line for asks
 
-            axes[1].set_title(f"Call Options ({next_friday_str})", fontsize=18)
-            axes[1].set_xlabel("(Strike Price - Stock Price) / Stock Price (%)", fontsize=14)
-            axes[1].set_ylabel("Premium / Strike Price (%)", fontsize=14)
-            axes[1].legend(fontsize=12)
-            axes[1].grid(True)
+            axes[1].set_title(f"Call Options ({next_friday_str})", fontsize=20)
+            axes[1].set_xlabel("(Strike Price - Stock Price) / Stock Price (%)", fontsize=16)
+            axes[1].set_ylabel("Premium / Strike Price (%)", fontsize=16)
+            axes[1].legend(fontsize=14)
+            axes[1].grid(True, linestyle="--", alpha=0.5)
             overlay_strike_prices(axes[1], calls_processed)
         else:
             axes[1].axis("off")  # Hide the axis if plot_call is False
