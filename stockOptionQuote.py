@@ -10,8 +10,8 @@ st.markdown("<h1 style='text-align: center; font-size: 48px;'>Options Quote Visu
 # Inputs for the app
 stock_ticker = st.text_input("Enter stock ticker:", "AAPL", label_visibility="collapsed")
 input_date_str = st.date_input("Enter date:", dt.datetime.now()).strftime("%Y-%m-%d")
-put_range = st.slider("Put Range (as % of stock price):", -50, 10, (-20, 5))
-call_range = st.slider("Call Range (as % of stock price):", -10, 50, (-5, 20))
+put_range = st.slider("Put Range (as % of stock price):", -50, 10, (-15, 0))
+call_range = st.slider("Call Range (as % of stock price):", -10, 50, (0, 15))
 plot_put = st.checkbox("Plot Puts", value=True)  # Default to True
 plot_call = st.checkbox("Plot Calls", value=False)  # Default to False
 
