@@ -57,7 +57,7 @@ try:
         ]
 
         # Plotting
-        fig, axes = plt.subplots(1, 1, figsize=(14, 8))  # Increased figsize for better visibility
+        fig, axes = plt.subplots(2, 1, figsize=(14, 12))  # 2 rows, 1 column for vertical layout
 
         def overlay_strike_prices(ax, option_data):
             ax2 = ax.twiny()
@@ -70,41 +70,41 @@ try:
 
         # Plot puts (only if plot_put is True)
         if plot_put:
-            # Plot the scatter points
-            axes.scatter(puts_processed["incremental_percentage"], puts_processed["bid_ratio"], color="blue", label="Bid")
-            axes.scatter(puts_processed["incremental_percentage"], puts_processed["ask_ratio"], color="orange", label="Ask")
+            # Plot the scatter points for puts
+            axes[0].scatter(puts_processed["incremental_percentage"], puts_processed["bid_ratio"], color="blue", label="Bid")
+            axes[0].scatter(puts_processed["incremental_percentage"], puts_processed["ask_ratio"], color="orange", label="Ask")
 
-            # Plot a line connecting the dots (optional)
-            axes.plot(puts_processed["incremental_percentage"], puts_processed["bid_ratio"], color="blue", alpha=0.5)  # Line for bids
-            axes.plot(puts_processed["incremental_percentage"], puts_processed["ask_ratio"], color="orange", alpha=0.5)  # Line for asks
+            # Plot a line connecting the dots for puts
+            axes[0].plot(puts_processed["incremental_percentage"], puts_processed["bid_ratio"], color="blue", alpha=0.5)  # Line for bids
+            axes[0].plot(puts_processed["incremental_percentage"], puts_processed["ask_ratio"], color="orange", alpha=0.5)  # Line for asks
 
-            axes.set_title(f"Put Options ({next_friday_str})", fontsize=18)
-            axes.set_xlabel("(Strike Price - Stock Price) / Stock Price (%)", fontsize=14)
-            axes.set_ylabel("Premium / Strike Price (%)", fontsize=14)
-            axes.legend(fontsize=12)
-            axes.grid(True)
-            overlay_strike_prices(axes, puts_processed)
+            axes[0].set_title(f"Put Options ({next_friday_str})", fontsize=18)
+            axes[0].set_xlabel("(Strike Price - Stock Price) / Stock Price (%)", fontsize=14)
+            axes[0].set_ylabel("Premium / Strike Price (%)", fontsize=14)
+            axes[0].legend(fontsize=12)
+            axes[0].grid(True)
+            overlay_strike_prices(axes[0], puts_processed)
         else:
-            axes.axis("off")  # Hide the axis if plot_put is False
+            axes[0].axis("off")  # Hide the axis if plot_put is False
 
         # Plot calls (only if plot_call is True)
         if plot_call:
             # Plot the scatter points for calls
-            axes.scatter(calls_processed["incremental_percentage"], calls_processed["bid_ratio"], color="blue", label="Bid")
-            axes.scatter(calls_processed["incremental_percentage"], calls_processed["ask_ratio"], color="orange", label="Ask")
+            axes[1].scatter(calls_processed["incremental_percentage"], calls_processed["bid_ratio"], color="blue", label="Bid")
+            axes[1].scatter(calls_processed["incremental_percentage"], calls_processed["ask_ratio"], color="orange", label="Ask")
 
             # Plot a line connecting the dots for calls
-            axes.plot(calls_processed["incremental_percentage"], calls_processed["bid_ratio"], color="blue", alpha=0.5)  # Line for bids
-            axes.plot(calls_processed["incremental_percentage"], calls_processed["ask_ratio"], color="orange", alpha=0.5)  # Line for asks
+            axes[1].plot(calls_processed["incremental_percentage"], calls_processed["bid_ratio"], color="blue", alpha=0.5)  # Line for bids
+            axes[1].plot(calls_processed["incremental_percentage"], calls_processed["ask_ratio"], color="orange", alpha=0.5)  # Line for asks
 
-            axes.set_title(f"Call Options ({next_friday_str})", fontsize=18)
-            axes.set_xlabel("(Strike Price - Stock Price) / Stock Price (%)", fontsize=14)
-            axes.set_ylabel("Premium / Strike Price (%)", fontsize=14)
-            axes.legend(fontsize=12)
-            axes.grid(True)
-            overlay_strike_prices(axes, calls_processed)
+            axes[1].set_title(f"Call Options ({next_friday_str})", fontsize=18)
+            axes[1].set_xlabel("(Strike Price - Stock Price) / Stock Price (%)", fontsize=14)
+            axes[1].set_ylabel("Premium / Strike Price (%)", fontsize=14)
+            axes[1].legend(fontsize=12)
+            axes[1].grid(True)
+            overlay_strike_prices(axes[1], calls_processed)
         else:
-            axes.axis("off")  # Hide the axis if plot_call is False
+            axes[1].axis("off")  # Hide the axis if plot_call is False
 
         # Adjust layout and display plot
         plt.tight_layout(pad=5.0)  # Increase padding to make the plot more spacious
