@@ -4,34 +4,18 @@ import pandas as pd
 import datetime as dt
 import streamlit as st
 
-# Manually control whether the script is for Streamlit or PyCharm (set it to True for Streamlit, False for PyCharm)
-is_streamlit_control = True  # Set this to True if running in Streamlit
-
 # Streamlit app title
-if is_streamlit_control:
-    st.title("Options Quote Visualizer")
-else:
-    print("Running in PyCharm (Console Mode)")
+st.title("Options Quote Visualizer")
 
-# Control input to switch between Streamlit and PyCharm modes
-if is_streamlit_control:
-    stock_ticker = st.text_input("Enter stock ticker:", "AAPL")
-    input_date_str = st.date_input("Enter date:", dt.datetime.now()).strftime("%Y-%m-%d")
-    put_range = st.slider("Put Range (as % of stock price):", -50, 10, (-20, 5))
-    call_range = st.slider("Call Range (as % of stock price):", -10, 50, (-5, 20))
-    plot_put = st.checkbox("Plot Puts", value=True)
-    plot_call = st.checkbox("Plot Calls", value=True)
-else:
-    # Default values for PyCharm or local environment
-    stock_ticker = "AAPL"  # Default stock ticker
-    input_date_str = "2025-01-03"  # Default date
-    put_range = [-20, 5]  # Default put range (min, max)
-    call_range = [-5, 20]  # Default call range (min, max)
-    plot_put = True  # Default: plot puts
-    plot_call = True  # Default: plot calls
-    print(f"Using default values for PyCharm: Stock = {stock_ticker}, Date = {input_date_str}, Put Range = {put_range}, Call Range = {call_range}")
+# Inputs for the app
+stock_ticker = st.text_input("Enter stock ticker:", "AAPL")
+input_date_str = st.date_input("Enter date:", dt.datetime.now()).strftime("%Y-%m-%d")
+put_range = st.slider("Put Range (as % of stock price):", -50, 10, (-20, 5))
+call_range = st.slider("Call Range (as % of stock price):", -10, 50, (-5, 20))
+plot_put = st.checkbox("Plot Puts", value=True)
+plot_call = st.checkbox("Plot Calls", value=False)  # Default set to False for Call plot
 
-# Parse the date and find the closest Friday
+# Find the closest Friday after the input date
 input_date = dt.datetime.strptime(input_date_str, "%Y-%m-%d")
 next_friday = input_date + dt.timedelta((4 - input_date.weekday()) % 7)
 next_friday_str = next_friday.strftime('%Y-%m-%d')
@@ -41,10 +25,7 @@ try:
     stock = yf.Ticker(stock_ticker)
     expiration_dates = stock.options
     if next_friday_str not in expiration_dates:
-        if is_streamlit_control:
-            st.error(f"No options data available for {next_friday_str}. Try another date.")
-        else:
-            print(f"No options data available for {next_friday_str}. Try another date.")
+        st.error(f"No options data available for {next_friday_str}. Try another date.")
     else:
         # Fetch options data for next Friday
         calls = stock.option_chain(next_friday_str).calls
@@ -76,7 +57,7 @@ try:
         ]
 
         # Plotting
-        fig, axes = plt.subplots(1, 2, figsize=(14, 6), sharey=True)
+        fig, axes = plt.subplots(1, 1, figsize=(14, 8))  # Increased figsize for better visibility
 
         def overlay_strike_prices(ax, option_data):
             ax2 = ax.twiny()
@@ -87,41 +68,28 @@ try:
             ax2.set_xticklabels([f"{strike:.1f}" for strike in strike_labels], rotation=45, ha='right')
             ax2.set_xlabel("Strike Price")
 
-        # Plot calls
-        if plot_call:
-            axes[1].scatter(calls_processed["incremental_percentage"], calls_processed["bid_ratio"], color="blue", label="Bid")
-            axes[1].scatter(calls_processed["incremental_percentage"], calls_processed["ask_ratio"], color="orange", label="Ask")
-            axes[1].set_title(f"Call Options ({next_friday_str})")
-            axes[1].set_xlabel("(Strike Price - Stock Price) / Stock Price (%)")
-            axes[1].legend()
-            axes[1].grid(True)
-            overlay_strike_prices(axes[1], calls_processed)
-        else:
-            axes[1].axis("off")
-
-        # Plot puts
+        # Plot puts (only if plot_put is True)
         if plot_put:
-            axes[0].scatter(puts_processed["incremental_percentage"], puts_processed["bid_ratio"], color="blue", label="Bid")
-            axes[0].scatter(puts_processed["incremental_percentage"], puts_processed["ask_ratio"], color="orange", label="Ask")
-            axes[0].set_title(f"Put Options ({next_friday_str})")
-            axes[0].set_xlabel("(Strike Price - Stock Price) / Stock Price (%)")
-            axes[0].set_ylabel("Premium / Strike Price (%)")
-            axes[0].legend()
-            axes[0].grid(True)
-            overlay_strike_prices(axes[0], puts_processed)
+            # Plot the scatter points
+            axes.scatter(puts_processed["incremental_percentage"], puts_processed["bid_ratio"], color="blue", label="Bid")
+            axes.scatter(puts_processed["incremental_percentage"], puts_processed["ask_ratio"], color="orange", label="Ask")
+
+            # Plot a line connecting the dots (optional)
+            axes.plot(puts_processed["incremental_percentage"], puts_processed["bid_ratio"], color="blue", alpha=0.5)  # Line for bids
+            axes.plot(puts_processed["incremental_percentage"], puts_processed["ask_ratio"], color="orange", alpha=0.5)  # Line for asks
+
+            axes.set_title(f"Put Options ({next_friday_str})", fontsize=18)
+            axes.set_xlabel("(Strike Price - Stock Price) / Stock Price (%)", fontsize=14)
+            axes.set_ylabel("Premium / Strike Price (%)", fontsize=14)
+            axes.legend(fontsize=12)
+            axes.grid(True)
+            overlay_strike_prices(axes, puts_processed)
         else:
-            axes[0].axis("off")
+            axes.axis("off")  # Hide the axis if plot_put is False
 
         # Adjust layout and display plot
-        plt.tight_layout()
-
-        if is_streamlit_control:
-            st.pyplot(fig)  # Display the plot in Streamlit
-        else:
-            plt.show()  # Display the plot in PyCharm/console
+        plt.tight_layout(pad=5.0)  # Increase padding to make the plot more spacious
+        st.pyplot(fig)
 
 except Exception as e:
-    if is_streamlit_control:
-        st.error(f"An error occurred: {e}")
-    else:
-        print(f"An error occurred: {e}")
+    st.error(f"An error occurred: {e}")
