@@ -5,7 +5,7 @@ import datetime as dt
 import streamlit as st
 
 # Streamlit app title with custom font size
-st.markdown("<h1 style='text-align: center; font-size: 32px;'>Options Quote Visualizer</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; font-size: 48px;'>Options Quote Visualizer</h1>", unsafe_allow_html=True)
 
 # Inputs for the app
 stock_ticker = st.text_input("Enter stock ticker:", "AAPL", label_visibility="collapsed")
@@ -78,7 +78,7 @@ try:
             axes[0].plot(puts_processed["incremental_percentage"], puts_processed["bid_ratio"], color="blue", alpha=0.5)  # Line for bids
             axes[0].plot(puts_processed["incremental_percentage"], puts_processed["ask_ratio"], color="orange", alpha=0.5)  # Line for asks
 
-            axes[0].set_title(f"Put Options ({next_friday_str})", fontsize=20)
+            axes[0].set_title(f"Put Options ({stock_ticker} - {next_friday_str})", fontsize=24)
             axes[0].set_xlabel("(Strike Price - Stock Price) / Stock Price (%)", fontsize=16)
             axes[0].set_ylabel("Premium / Strike Price (%)", fontsize=16)
             axes[0].legend(fontsize=14)
@@ -97,7 +97,7 @@ try:
             axes[1].plot(calls_processed["incremental_percentage"], calls_processed["bid_ratio"], color="blue", alpha=0.5)  # Line for bids
             axes[1].plot(calls_processed["incremental_percentage"], calls_processed["ask_ratio"], color="orange", alpha=0.5)  # Line for asks
 
-            axes[1].set_title(f"Call Options ({next_friday_str})", fontsize=20)
+            axes[1].set_title(f"Call Options ({stock_ticker} - {next_friday_str})", fontsize=24)
             axes[1].set_xlabel("(Strike Price - Stock Price) / Stock Price (%)", fontsize=16)
             axes[1].set_ylabel("Premium / Strike Price (%)", fontsize=16)
             axes[1].legend(fontsize=14)
