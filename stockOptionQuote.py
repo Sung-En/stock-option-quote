@@ -12,8 +12,8 @@ stock_ticker = st.text_input("Enter stock ticker:", "AAPL")
 input_date_str = st.date_input("Enter date:", dt.datetime.now()).strftime("%Y-%m-%d")
 put_range = st.slider("Put Range (as % of stock price):", -50, 10, (-20, 5))
 call_range = st.slider("Call Range (as % of stock price):", -10, 50, (-5, 20))
-plot_put = st.checkbox("Plot Puts", value=True)
-plot_call = st.checkbox("Plot Calls", value=False)  # Default set to False for Call plot
+plot_put = st.checkbox("Plot Puts", value=True)  # Default to True
+plot_call = st.checkbox("Plot Calls", value=False)  # Default to False
 
 # Find the closest Friday after the input date
 input_date = dt.datetime.strptime(input_date_str, "%Y-%m-%d")
@@ -86,6 +86,25 @@ try:
             overlay_strike_prices(axes, puts_processed)
         else:
             axes.axis("off")  # Hide the axis if plot_put is False
+
+        # Plot calls (only if plot_call is True)
+        if plot_call:
+            # Plot the scatter points for calls
+            axes.scatter(calls_processed["incremental_percentage"], calls_processed["bid_ratio"], color="blue", label="Bid")
+            axes.scatter(calls_processed["incremental_percentage"], calls_processed["ask_ratio"], color="orange", label="Ask")
+
+            # Plot a line connecting the dots for calls
+            axes.plot(calls_processed["incremental_percentage"], calls_processed["bid_ratio"], color="blue", alpha=0.5)  # Line for bids
+            axes.plot(calls_processed["incremental_percentage"], calls_processed["ask_ratio"], color="orange", alpha=0.5)  # Line for asks
+
+            axes.set_title(f"Call Options ({next_friday_str})", fontsize=18)
+            axes.set_xlabel("(Strike Price - Stock Price) / Stock Price (%)", fontsize=14)
+            axes.set_ylabel("Premium / Strike Price (%)", fontsize=14)
+            axes.legend(fontsize=12)
+            axes.grid(True)
+            overlay_strike_prices(axes, calls_processed)
+        else:
+            axes.axis("off")  # Hide the axis if plot_call is False
 
         # Adjust layout and display plot
         plt.tight_layout(pad=5.0)  # Increase padding to make the plot more spacious
