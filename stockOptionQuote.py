@@ -4,8 +4,8 @@ import pandas as pd
 import datetime as dt
 import streamlit as st
 
-# Streamlit app title
-st.title("Options Quote Visualizer", fontsize=24)
+# Streamlit app title with custom font size
+st.markdown("<h1 style='text-align: center; font-size: 32px;'>Options Quote Visualizer</h1>", unsafe_allow_html=True)
 
 # Inputs for the app
 stock_ticker = st.text_input("Enter stock ticker:", "AAPL", label_visibility="collapsed")
