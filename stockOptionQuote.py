@@ -3,6 +3,10 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import datetime as dt
 import streamlit as st
+from streamlit_localstorage import LocalStorage
+
+# LocalStorage object to handle persistent input settings
+local_storage = LocalStorage()
 
 # Default settings
 DEFAULT_SETTINGS = {
@@ -14,30 +18,24 @@ DEFAULT_SETTINGS = {
     "plot_call": False
 }
 
-# Initialize session state if not already set
-if "inputs" not in st.session_state:
-    st.session_state.inputs = DEFAULT_SETTINGS.copy()
+# Fetch settings from local storage or use default
+stored_settings = local_storage.get("user_settings")
+if stored_settings:
+    settings = stored_settings
+else:
+    settings = DEFAULT_SETTINGS.copy()
 
-# Function to reset inputs to default
-def reset_to_defaults():
-    st.session_state.inputs = DEFAULT_SETTINGS.copy()
+# UI Components
+st.title("Options Quote Visualizer")
+stock_ticker = st.text_input("Enter stock ticker:", settings["stock_ticker"])
+input_date_str = st.date_input("Enter date:", pd.to_datetime(settings["input_date_str"]))
+put_range = st.slider("Put Range (as % of stock price):", -50, 10, settings["put_range"])
+call_range = st.slider("Call Range (as % of stock price):", -10, 50, settings["call_range"])
+plot_put = st.checkbox("Plot Puts", value=settings["plot_put"])
+plot_call = st.checkbox("Plot Calls", value=settings["plot_call"])
 
-# UI: Button to load defaults
-st.button("Load Defaults", on_click=reset_to_defaults)
-
-# UI: Title
-st.markdown("<h1 style='text-align: center; font-size: 48px;'>Options Quote Visualizer</h1>", unsafe_allow_html=True)
-
-# Input fields
-stock_ticker = st.text_input("Enter stock ticker:", st.session_state.inputs["stock_ticker"])
-input_date_str = st.date_input("Enter date:", pd.to_datetime(st.session_state.inputs["input_date_str"]))
-put_range = st.slider("Put Range (as % of stock price):", -50, 10, st.session_state.inputs["put_range"])
-call_range = st.slider("Call Range (as % of stock price):", -10, 50, st.session_state.inputs["call_range"])
-plot_put = st.checkbox("Plot Puts", value=st.session_state.inputs["plot_put"])
-plot_call = st.checkbox("Plot Calls", value=st.session_state.inputs["plot_call"])
-
-# Save current input values to session state
-st.session_state.inputs.update({
+# Update settings
+settings.update({
     "stock_ticker": stock_ticker,
     "input_date_str": input_date_str.strftime("%Y-%m-%d"),
     "put_range": put_range,
@@ -46,11 +44,19 @@ st.session_state.inputs.update({
     "plot_call": plot_call
 })
 
-# Fetch stock data and plot
+# Save settings to local storage
+local_storage.set("user_settings", settings)
+
+# Logic to reset to defaults
+if st.button("Load Defaults"):
+    settings = DEFAULT_SETTINGS.copy()
+    local_storage.set("user_settings", settings)
+
+# Functionality to plot options data
 try:
     stock = yf.Ticker(stock_ticker)
     expiration_dates = stock.options
-    input_date = dt.datetime.strptime(st.session_state.inputs["input_date_str"], "%Y-%m-%d")
+    input_date = dt.datetime.strptime(settings["input_date_str"], "%Y-%m-%d")
     next_friday = input_date + dt.timedelta((4 - input_date.weekday()) % 7)
     next_friday_str = next_friday.strftime('%Y-%m-%d')
 
@@ -72,12 +78,12 @@ try:
         puts_processed = process_option_data(puts, stock_price)
 
         calls_filtered = calls_processed[
-            (calls_processed["incremental_percentage"] >= st.session_state.inputs["call_range"][0]) &
-            (calls_processed["incremental_percentage"] <= st.session_state.inputs["call_range"][1])
+            (calls_processed["incremental_percentage"] >= settings["call_range"][0]) &
+            (calls_processed["incremental_percentage"] <= settings["call_range"][1])
         ]
         puts_filtered = puts_processed[
-            (puts_processed["incremental_percentage"] >= st.session_state.inputs["put_range"][0]) &
-            (puts_processed["incremental_percentage"] <= st.session_state.inputs["put_range"][1])
+            (puts_processed["incremental_percentage"] >= settings["put_range"][0]) &
+            (puts_processed["incremental_percentage"] <= settings["put_range"][1])
         ]
 
         # Plotting
@@ -91,8 +97,6 @@ try:
             ax.plot(calls_filtered["incremental_percentage"], calls_filtered["bid_ratio"], color="green", label="Call Bid", marker="x")
             ax.plot(calls_filtered["incremental_percentage"], calls_filtered["ask_ratio"], color="red", label="Call Ask", marker="x")
 
-        # Add strike prices as x-axis labels
-        all_strikes = pd.concat([puts_filtered["strike"], calls_filtered["strike"]]) if plot_call else puts_filtered["strike"]
         ax.set_xticks(puts_filtered["incremental_percentage"])
         ax.set_xticklabels([f"{s:.1f}\n({int(strike)})" for s, strike in zip(puts_filtered["incremental_percentage"], puts_filtered["strike"])], fontsize=12)
 
