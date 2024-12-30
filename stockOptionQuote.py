@@ -1,4 +1,3 @@
-@@ -1,147 +1,147 @@
 import yfinance as yf
 import matplotlib.pyplot as plt
 import pandas as pd
