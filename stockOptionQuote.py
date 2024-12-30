@@ -81,28 +81,25 @@ try:
         ]
 
         # Plotting
-        fig, axes = plt.subplots(2, 1, figsize=(10, 12), sharex=True)
+        fig, ax = plt.subplots(figsize=(10, 6))
 
         def overlay_grid(ax):
             ax.xaxis.set_major_locator(plt.MultipleLocator(1))
-            ax.grid(True, which='major', axis='x', linestyle='--', linewidth=0.7)
+            ax.grid(True, which='both', linestyle='--', linewidth=0.7)
 
-        if st.session_state.inputs["plot_put"]:
-            axes[0].plot(puts_filtered["incremental_percentage"], puts_filtered["bid_ratio"], color="blue", label="Bid", marker="o")
-            axes[0].plot(puts_filtered["incremental_percentage"], puts_filtered["ask_ratio"], color="orange", label="Ask", marker="o")
-            axes[0].set_title(f"{stock_ticker} {next_friday_str} (Put Option Quotes)", fontsize=20)
-            axes[0].set_ylabel("Premium / Strike (%)", fontsize=16)
-            axes[0].legend(fontsize=14)
-            overlay_grid(axes[0])
+        if plot_put:
+            ax.plot(puts_filtered["incremental_percentage"], puts_filtered["bid_ratio"], color="blue", label="Put Bid", marker="o")
+            ax.plot(puts_filtered["incremental_percentage"], puts_filtered["ask_ratio"], color="orange", label="Put Ask", marker="o")
 
-        if st.session_state.inputs["plot_call"]:
-            axes[1].plot(calls_filtered["incremental_percentage"], calls_filtered["bid_ratio"], color="blue", label="Bid", marker="o")
-            axes[1].plot(calls_filtered["incremental_percentage"], calls_filtered["ask_ratio"], color="orange", label="Ask", marker="o")
-            axes[1].set_title(f"{stock_ticker} {next_friday_str} (Call Option Quotes)", fontsize=20)
-            axes[1].set_ylabel("Premium / Strike (%)", fontsize=16)
-            axes[1].set_xlabel("(Strike Price - Stock Price) / Stock Price (%)", fontsize=16)
-            axes[1].legend(fontsize=14)
-            overlay_grid(axes[1])
+        if plot_call:
+            ax.plot(calls_filtered["incremental_percentage"], calls_filtered["bid_ratio"], color="green", label="Call Bid", marker="x")
+            ax.plot(calls_filtered["incremental_percentage"], calls_filtered["ask_ratio"], color="red", label="Call Ask", marker="x")
+
+        ax.set_title(f"{stock_ticker} {next_friday_str} (Options Quotes)", fontsize=20)
+        ax.set_xlabel("(Strike Price - Stock Price) / Stock Price (%)", fontsize=16)
+        ax.set_ylabel("Premium / Strike (%)", fontsize=16)
+        ax.legend(fontsize=14)
+        overlay_grid(ax)
 
         plt.xticks(fontsize=14)
         plt.yticks(fontsize=14)
