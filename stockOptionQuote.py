@@ -81,11 +81,7 @@ try:
         ]
 
         # Plotting
-        fig, ax = plt.subplots(figsize=(10, 6))
-
-        def overlay_grid(ax):
-            ax.xaxis.set_major_locator(plt.MultipleLocator(1))
-            ax.grid(True, which='both', linestyle='--', linewidth=0.7)
+        fig, ax = plt.subplots(figsize=(12, 8))
 
         if plot_put:
             ax.plot(puts_filtered["incremental_percentage"], puts_filtered["bid_ratio"], color="blue", label="Put Bid", marker="o")
@@ -95,13 +91,17 @@ try:
             ax.plot(calls_filtered["incremental_percentage"], calls_filtered["bid_ratio"], color="green", label="Call Bid", marker="x")
             ax.plot(calls_filtered["incremental_percentage"], calls_filtered["ask_ratio"], color="red", label="Call Ask", marker="x")
 
-        ax.set_title(f"{stock_ticker} {next_friday_str} (Options Quotes)", fontsize=20)
+        # Add strike prices as x-axis labels
+        all_strikes = pd.concat([puts_filtered["strike"], calls_filtered["strike"]]) if plot_call else puts_filtered["strike"]
+        ax.set_xticks(puts_filtered["incremental_percentage"])
+        ax.set_xticklabels([f"{s:.1f}\n({int(strike)})" for s, strike in zip(puts_filtered["incremental_percentage"], puts_filtered["strike"])], fontsize=12)
+
+        ax.set_title(f"{stock_ticker} {next_friday_str} (Put Option Quotes)", fontsize=20)
         ax.set_xlabel("(Strike Price - Stock Price) / Stock Price (%)", fontsize=16)
         ax.set_ylabel("Premium / Strike (%)", fontsize=16)
         ax.legend(fontsize=14)
-        overlay_grid(ax)
+        ax.grid(True, which='both', linestyle='--', linewidth=0.7)
 
-        plt.xticks(fontsize=14)
         plt.yticks(fontsize=14)
         plt.tight_layout()
         st.pyplot(fig)
