@@ -71,11 +71,11 @@ try:
         plt.subplots_adjust(hspace=0.5)
 
         def overlay_strike_prices(ax, option_data):
-            ax2 = ax.twiny()
-            ax2.set_xlim(ax.get_xlim())
+            ax2 = ax.twiny()  # Add a second x-axis to the same plot
+            ax2.set_xlim(ax.get_xlim())  # Ensure the limits match the first x-axis
             strike_labels = option_data["strike"].values
             strike_positions = option_data["incremental_percentage"].values
-            ax2.set_xticks(strike_positions)
+            ax2.set_xticks(strike_positions)  # Position strike prices on the second x-axis
             ax2.set_xticklabels([f"{strike:.1f}" for strike in strike_labels], rotation=45, ha='right')
             ax2.set_xlabel("Strike Price", fontsize=14)
 
@@ -87,7 +87,7 @@ try:
             axes[0].set_xlabel("(Strike Price - Stock Price) / Stock Price (%)", fontsize=14)
             axes[0].set_ylabel("Premium / Strike Price (%)", fontsize=14)
             axes[0].grid(True, axis="x", which="both", linestyle="--", linewidth=0.5)
-            overlay_strike_prices(axes[0], puts_processed)
+            overlay_strike_prices(axes[0], puts_processed)  # Overlay strike prices on puts plot
 
         # Plot calls
         if plot_call:
@@ -97,7 +97,7 @@ try:
             axes[1].set_xlabel("(Strike Price - Stock Price) / Stock Price (%)", fontsize=14)
             axes[1].set_ylabel("Premium / Strike Price (%)", fontsize=14)
             axes[1].grid(True, axis="x", which="both", linestyle="--", linewidth=0.5)
-            overlay_strike_prices(axes[1], calls_processed)
+            overlay_strike_prices(axes[1], calls_processed)  # Overlay strike prices on calls plot
 
         st.pyplot(fig)
 
