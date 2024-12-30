@@ -9,7 +9,7 @@ from streamlit_local_storage import LocalStorage
 local_storage = LocalStorage()
 
 # Load previous settings if available
-stored_settings = local_storage.get_item("user_settings")
+stored_settings = local_storage.getItem("user_settings")  # Corrected method name
 default_settings = {
     "stock_ticker": "AAPL",
     "input_date": dt.datetime.now().strftime("%Y-%m-%d"),
@@ -46,10 +46,10 @@ def save_settings():
         "plot_put": plot_put,
         "plot_call": plot_call,
     }
-    local_storage.set_item("user_settings", new_settings)
+    local_storage.setItem("user_settings", new_settings)  # Corrected method name
 
 st.button("Save Settings", on_click=save_settings)
-st.button("Load Default", on_click=lambda: local_storage.set_item("user_settings", default_settings))
+st.button("Load Default", on_click=lambda: local_storage.setItem("user_settings", default_settings))  # Corrected method name
 
 # Determine the closest Friday after the input date
 input_date = dt.datetime.strptime(input_date_str, "%Y-%m-%d")
