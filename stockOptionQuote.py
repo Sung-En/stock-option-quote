@@ -4,16 +4,26 @@ import pandas as pd
 import datetime as dt
 import streamlit as st
 
+# Default settings
+default_settings = {
+    "stock_ticker": "AAPL",
+    "input_date": dt.datetime.now().strftime("%Y-%m-%d"),
+    "put_range": (-20, 5),
+    "call_range": (-5, 20),
+    "plot_put": True,
+    "plot_call": False,
+}
+
 # Streamlit app title
 st.title("Options Quote Visualizer")
 
-# Default settings (you can manually adjust these values for testing)
-stock_ticker = st.text_input("Enter stock ticker:", "AAPL")
-input_date_str = st.date_input("Enter date:", dt.datetime.now().strftime("%Y-%m-%d")).strftime("%Y-%m-%d")
-put_range = st.slider("Put Range (as % of stock price):", -50, 10, (-20, 5))
-call_range = st.slider("Call Range (as % of stock price):", -10, 50, (-5, 20))
-plot_put = st.checkbox("Plot Puts", value=True)
-plot_call = st.checkbox("Plot Calls", value=False)
+# Inputs for the app (default settings)
+stock_ticker = st.text_input("Enter stock ticker:", default_settings["stock_ticker"])
+input_date_str = st.date_input("Enter date:", dt.datetime.strptime(default_settings["input_date"], "%Y-%m-%d")).strftime("%Y-%m-%d")
+put_range = st.slider("Put Range (as % of stock price):", -50, 10, default_settings["put_range"])
+call_range = st.slider("Call Range (as % of stock price):", -10, 50, default_settings["call_range"])
+plot_put = st.checkbox("Plot Puts", value=default_settings["plot_put"])
+plot_call = st.checkbox("Plot Calls", value=default_settings["plot_call"])
 
 # Determine the closest Friday after the input date
 input_date = dt.datetime.strptime(input_date_str, "%Y-%m-%d")
