@@ -3,53 +3,17 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import datetime as dt
 import streamlit as st
-from streamlit_local_storage import LocalStorage
-
-# Initialize local storage
-local_storage = LocalStorage()
-
-# Load previous settings if available
-stored_settings = local_storage.getItem("user_settings")  # Corrected method name
-default_settings = {
-    "stock_ticker": "AAPL",
-    "input_date": dt.datetime.now().strftime("%Y-%m-%d"),
-    "put_range": (-20, 5),
-    "call_range": (-5, 20),
-    "plot_put": True,
-    "plot_call": False,
-}
-
-# Use stored settings or default
-if stored_settings is not None:
-    user_settings = stored_settings
-else:
-    user_settings = default_settings
 
 # Streamlit app title
 st.title("Options Quote Visualizer")
 
-# Inputs for the app
-stock_ticker = st.text_input("Enter stock ticker:", user_settings["stock_ticker"])
-input_date_str = st.date_input("Enter date:", dt.datetime.strptime(user_settings["input_date"], "%Y-%m-%d")).strftime("%Y-%m-%d")
-put_range = st.slider("Put Range (as % of stock price):", -50, 10, user_settings["put_range"])
-call_range = st.slider("Call Range (as % of stock price):", -10, 50, user_settings["call_range"])
-plot_put = st.checkbox("Plot Puts", value=user_settings["plot_put"])
-plot_call = st.checkbox("Plot Calls", value=user_settings["plot_call"])
-
-# Save settings on update
-def save_settings():
-    new_settings = {
-        "stock_ticker": stock_ticker,
-        "input_date": input_date_str,
-        "put_range": put_range,
-        "call_range": call_range,
-        "plot_put": plot_put,
-        "plot_call": plot_call,
-    }
-    local_storage.setItem("user_settings", new_settings)  # Corrected method name
-
-st.button("Save Settings", on_click=save_settings)
-st.button("Load Default", on_click=lambda: local_storage.setItem("user_settings", default_settings))  # Corrected method name
+# Default settings (you can manually adjust these values for testing)
+stock_ticker = st.text_input("Enter stock ticker:", "AAPL")
+input_date_str = st.date_input("Enter date:", dt.datetime.now().strftime("%Y-%m-%d")).strftime("%Y-%m-%d")
+put_range = st.slider("Put Range (as % of stock price):", -50, 10, (-20, 5))
+call_range = st.slider("Call Range (as % of stock price):", -10, 50, (-5, 20))
+plot_put = st.checkbox("Plot Puts", value=True)
+plot_call = st.checkbox("Plot Calls", value=False)
 
 # Determine the closest Friday after the input date
 input_date = dt.datetime.strptime(input_date_str, "%Y-%m-%d")
