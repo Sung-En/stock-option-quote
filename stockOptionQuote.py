@@ -18,63 +18,48 @@ DEFAULT_SETTINGS = {
 if "inputs" not in st.session_state:
     st.session_state.inputs = DEFAULT_SETTINGS.copy()
 
-# Functions to handle state updates
-def update_session_state(key, value):
-    st.session_state.inputs[key] = value
-
 # Load defaults on button click
 if st.button("Load Defaults"):
     st.session_state.inputs = DEFAULT_SETTINGS.copy()
 
-# Input fields with session state persistence
+# Input fields
 st.markdown("<h1 style='text-align: center; font-size: 48px;'>Options Quote Visualizer</h1>", unsafe_allow_html=True)
 
 stock_ticker = st.text_input(
     "Enter stock ticker:",
-    st.session_state.inputs["stock_ticker"],
-    on_change=update_session_state,
-    args=("stock_ticker",)
+    st.session_state.inputs["stock_ticker"]
 )
+st.session_state.inputs["stock_ticker"] = stock_ticker
+
 input_date_str = st.date_input(
     "Enter date:",
-    pd.to_datetime(st.session_state.inputs["input_date_str"]),
-    on_change=update_session_state,
-    args=("input_date_str",)
+    pd.to_datetime(st.session_state.inputs["input_date_str"])
 )
+st.session_state.inputs["input_date_str"] = input_date_str.strftime("%Y-%m-%d")
+
 put_range = st.slider(
     "Put Range (as % of stock price):",
-    -50, 10, st.session_state.inputs["put_range"],
-    on_change=update_session_state,
-    args=("put_range",)
+    -50, 10, st.session_state.inputs["put_range"]
 )
+st.session_state.inputs["put_range"] = put_range
+
 call_range = st.slider(
     "Call Range (as % of stock price):",
-    -10, 50, st.session_state.inputs["call_range"],
-    on_change=update_session_state,
-    args=("call_range",)
+    -10, 50, st.session_state.inputs["call_range"]
 )
+st.session_state.inputs["call_range"] = call_range
+
 plot_put = st.checkbox(
     "Plot Puts",
-    value=st.session_state.inputs["plot_put"],
-    on_change=update_session_state,
-    args=("plot_put",)
+    value=st.session_state.inputs["plot_put"]
 )
+st.session_state.inputs["plot_put"] = plot_put
+
 plot_call = st.checkbox(
     "Plot Calls",
-    value=st.session_state.inputs["plot_call"],
-    on_change=update_session_state,
-    args=("plot_call",)
+    value=st.session_state.inputs["plot_call"]
 )
-
-# Update session state inputs with current values
-st.session_state.inputs = {
-    "stock_ticker": stock_ticker,
-    "input_date_str": input_date_str.strftime("%Y-%m-%d"),
-    "put_range": put_range,
-    "call_range": call_range,
-    "plot_put": plot_put,
-    "plot_call": plot_call
-}
+st.session_state.inputs["plot_call"] = plot_call
 
 # Fetch stock data
 try:
