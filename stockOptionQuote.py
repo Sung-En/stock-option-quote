@@ -18,50 +18,35 @@ DEFAULT_SETTINGS = {
 if "inputs" not in st.session_state:
     st.session_state.inputs = DEFAULT_SETTINGS.copy()
 
-# Load defaults on button click
-if st.button("Load Defaults"):
+# Function to reset inputs to default
+def reset_to_defaults():
     st.session_state.inputs = DEFAULT_SETTINGS.copy()
 
-# Input fields
+# UI: Button to load defaults
+st.button("Load Defaults", on_click=reset_to_defaults)
+
+# UI: Title
 st.markdown("<h1 style='text-align: center; font-size: 48px;'>Options Quote Visualizer</h1>", unsafe_allow_html=True)
 
-stock_ticker = st.text_input(
-    "Enter stock ticker:",
-    st.session_state.inputs["stock_ticker"]
-)
-st.session_state.inputs["stock_ticker"] = stock_ticker
+# Input fields
+stock_ticker = st.text_input("Enter stock ticker:", st.session_state.inputs["stock_ticker"])
+input_date_str = st.date_input("Enter date:", pd.to_datetime(st.session_state.inputs["input_date_str"]))
+put_range = st.slider("Put Range (as % of stock price):", -50, 10, st.session_state.inputs["put_range"])
+call_range = st.slider("Call Range (as % of stock price):", -10, 50, st.session_state.inputs["call_range"])
+plot_put = st.checkbox("Plot Puts", value=st.session_state.inputs["plot_put"])
+plot_call = st.checkbox("Plot Calls", value=st.session_state.inputs["plot_call"])
 
-input_date_str = st.date_input(
-    "Enter date:",
-    pd.to_datetime(st.session_state.inputs["input_date_str"])
-)
-st.session_state.inputs["input_date_str"] = input_date_str.strftime("%Y-%m-%d")
+# Save current input values to session state
+st.session_state.inputs.update({
+    "stock_ticker": stock_ticker,
+    "input_date_str": input_date_str.strftime("%Y-%m-%d"),
+    "put_range": put_range,
+    "call_range": call_range,
+    "plot_put": plot_put,
+    "plot_call": plot_call
+})
 
-put_range = st.slider(
-    "Put Range (as % of stock price):",
-    -50, 10, st.session_state.inputs["put_range"]
-)
-st.session_state.inputs["put_range"] = put_range
-
-call_range = st.slider(
-    "Call Range (as % of stock price):",
-    -10, 50, st.session_state.inputs["call_range"]
-)
-st.session_state.inputs["call_range"] = call_range
-
-plot_put = st.checkbox(
-    "Plot Puts",
-    value=st.session_state.inputs["plot_put"]
-)
-st.session_state.inputs["plot_put"] = plot_put
-
-plot_call = st.checkbox(
-    "Plot Calls",
-    value=st.session_state.inputs["plot_call"]
-)
-st.session_state.inputs["plot_call"] = plot_call
-
-# Fetch stock data
+# Fetch stock data and plot
 try:
     stock = yf.Ticker(stock_ticker)
     expiration_dates = stock.options
