@@ -3,13 +3,16 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import datetime as dt
 import streamlit as st
+import re
 
 # Streamlit app title with custom font size
 st.markdown("<h1 style='text-align: center; font-size: 48px;'>Options Quote Visualizer</h1>", unsafe_allow_html=True)
 
 
-# Enhanced input for the stock ticker: strip spaces and ensure uppercase
-stock_ticker = st.text_input("Enter stock ticker:", "AAPL", label_visibility="collapsed").replace(" ", "").upper()
+# Extract only English alphabetic characters from the input
+stock_ticker = st.text_input("Enter stock ticker:", "AAPL", label_visibility="collapsed")
+cleaned_ticker = "".join(re.findall(r'[A-Za-z]+', stock_ticker)).upper()
+
 input_date_str = st.date_input("Enter date:", dt.datetime.now()).strftime("%Y-%m-%d")
 put_range = st.slider("Put Range (as % of stock price):", -50, 10, (-15, 0))
 call_range = st.slider("Call Range (as % of stock price):", -10, 50, (0, 20))
