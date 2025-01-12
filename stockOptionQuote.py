@@ -11,7 +11,7 @@ st.markdown("<h1 style='text-align: center; font-size: 48px;'>Options Quote Visu
 
 # Extract only English alphabetic characters from the input
 stock_ticker = st.text_input("Enter stock ticker:", "AAPL", label_visibility="collapsed")
-cleaned_ticker = "".join(re.findall(r'[A-Za-z]+', stock_ticker)).upper()
+stock_ticker = "".join(re.findall(r'[A-Za-z]+', stock_ticker)).upper()
 
 input_date_str = st.date_input("Enter date:", dt.datetime.now()).strftime("%Y-%m-%d")
 put_range = st.slider("Put Range (as % of stock price):", -50, 10, (-15, 0))
