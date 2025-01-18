@@ -36,8 +36,8 @@ try:
         puts = stock.option_chain(next_friday_str).puts
 
         # Fetch current stock price
-        stock_price = stock.history(period="1d")['Close'].iloc[-1]
-
+        # stock_price = stock.history(period="1d")['Close'].iloc[-1]
+        stock_price = stock.info['currentPrice']
 
         # Function to process data for plotting
         def process_option_data(option_data, stock_price):
